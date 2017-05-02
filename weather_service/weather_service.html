@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WEATHER_SERVICE</title>
+
+    <link rel="stylesheet" type="text/css" href="weather_service.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="main.js"></script>
+    <script src="model.js"></script>
+
+</head>
+<body>
+
+
+<header>
+<h1>WEATHER_SERVICE</h1>
+</header>
+
+<main>
+<div class="searchWeather">
+<input id="location" type="search" placeholder="Type a location (City)">
+    <button id="searchButton">Search</button>
+</div>
+
+<div class="currentWeather">
+<div class="currentLocation">
+    <p id="currentCity">Helsinki, Finland</p>
+    <p id="temp">+5°C</p>
+    <button class="favouritesButton" id="favouritesButton">Save to favourites</button>
+</div>
+
+
+<!--<div class="favourites">
+        <p>Espoo, Finland</p>
+        <p id="temp">+5°C</p>
+</div>-->
+</div>
+
+<div class="worse">
+<h1>Or would you rather be in: </h1>
+
+
+
+<div class="worseWeather">
+    <p>Smolensk, Russia</p>
+    <p id="temp">+3°C</p>
+
+    <a id="webcam" name="lkr-timelapse-player" data-id="1022317836" data-play="day" href="//lookr.com/1022317836" target="_blank">Zurich: University of Zurich − Swiss National Museum − Zürich, Zürich HB − ETH Zurich − Uetliberg</a>
+    <script async type="text/javascript" src="//api.lookr.com/embed/script/timelapse.js"></script>
+
+</div>
+
+</div>
+
+<div class="twitter">
+</div>
+
+</main>
+
+</body>
+</html>
