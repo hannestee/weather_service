@@ -1,14 +1,20 @@
 
 
+var worse_weather = [[64.53, 40.54, 'Arkhangel´sk', 'Russia'], [68.43, 27.45, 'Inari', 'Finland'], [68.44, 18.08, 'Bjørnfjell', 'Norway'], [64.18, -51.72, 'Nuuk', 'Greenland'], [62.84, -69.87, 'Kimmirut', 'Canada'], [71.29, -156.78, 'Barrow', 'United States, Alaska'] ];
+
+
 var locations = [];
-var temperature = [];
+
 var typed_location;
 
 $( document ).ready(function() {
-    console.log("ready!");
+    console.log("model.js ready!");
+
+
+    var temperature;
 
     $('#searchButton').click(function(){
-        console.log('clicked');
+        //console.log('clicked');
         var value = $("#location").val();
         locations = [];
         getLocation(value);
@@ -25,6 +31,16 @@ $( document ).ready(function() {
             });
     }
 
+    function getPlaceName(lat, lng) {
+        $.ajax({
+            'url': 'http://api.geonames.org/findNearbyPlaceNameJSON?lat='+lat+'&lng='+lng+'&username=karjala100',
+            'dataType': 'json',
+            'success': function(data){
+                console.log(data.geonames[0].name);
+                getLocation(data.geonames[0].name);
+            }
+        });
+    }
 
     function onGetLocation(data) {
         //console.log('onGetLocation');
@@ -38,21 +54,30 @@ $( document ).ready(function() {
 
             locations.push({'id':id, 'info':[name, countryName, lat, lng]});
         });
-
-        console.log(locations);
+        //console.log(locations);
         //console.log(typed_location);
-
-        getWeather(locations[0].info[2], locations[0].info[3]);
-        getWebcam(locations[0].info[2], locations[0].info[3]);
+        getWeather(locations[0].info[2], locations[0].info[3], 'current');
     }
 
 
-    function getWeather(lat, lng){
-        $.ajax({
-            'url': 'http://api.geonames.org/findNearByWeatherJSON?lat='+lat+'&lng='+lng+'&username=karjala100',
-            'dataType': 'json',
-            'success': showWeather
+    function getWeather(lat, lng, weather_type, place){
+
+        if (weather_type === 'current') {
+            $.ajax({
+                'url': 'http://api.geonames.org/findNearByWeatherJSON?lat=' + lat + '&lng=' + lng + '&username=karjala100',
+                'dataType': 'json',
+                'success': showWeather
+            });
+        } else {
+            $.ajax({
+                'url': 'http://api.geonames.org/findNearByWeatherJSON?lat=' + lat + '&lng=' + lng + '&username=karjala100',
+                'dataType': 'json',
+                'success': function(data){
+                    showWorseWeather(data, place, lat, lng);
+            }
         });
+        }
+
     }
 
     function getWebcam(lat, lng){
@@ -62,10 +87,9 @@ $( document ).ready(function() {
             data: {}, // Additional parameters here
             datatype: 'json',
             success: function(data) {
-                console.log(data);
-                console.log(data.result.webcams[0].id);
+                //console.log(data);
+                //console.log(data.result.webcams[0].id);
                 setWebcam(data.result.webcams[0].id);
-
             },
             error: function(err) { console.log(err); },
             beforeSend: function(xhr) {
@@ -77,11 +101,13 @@ $( document ).ready(function() {
     function showWeather(data) {
 
         $.each(data, function(){
-            console.log(data);
-           console.log(data.weatherObservation.temperature);
+           //console.log(data);
+           //console.log(data.weatherObservation.temperature);
            temp = data.weatherObservation.temperature;
+           temperature = temp;
+           //console.log(temperature);
            /*temperature.push({'temperature': data.temperature})
-            console.log(data);*/
+           console.log(data);*/
         });
 
         if (locations[0] !== null) {
@@ -89,5 +115,54 @@ $( document ).ready(function() {
         } else {
             onLocationSelected('Not found', 'Not found');
         }
+
+        setWorseWeather();
+
     }
+
+    function showWorseWeather(data, place, lat, lng) {
+        //console.log("worse weather");
+        //console.log(temperature);
+
+        $.each(data, function(){
+            //console.log(data);
+            //console.log(place);
+            console.log(parseInt(data.weatherObservation.temperature));
+            console.log(parseInt(temperature));
+
+            if (parseInt(temperature) > parseInt(data.weatherObservation.temperature)){
+                $(".worse").show();
+                $("#worseCity").text(place);
+                $("#worseTemp").text(data.weatherObservation.temperature + '°C');
+                getWebcam(lat, lng);
+            } else {
+                $(".worse").hide();
+            }
+        });
+    }
+
+    function setWorseWeather(){
+        var rand = worse_weather[Math.floor(Math.random() * worse_weather.length)];
+        getWeather(rand[0], rand[1], '', rand[2] + ', ' +rand [3]);
+        //console.log(rand[2]);
+    }
+
+
+    function getGeoLocation(){
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function showPosition(position) {
+        console.log("Geo coords: ", position.coords.latitude, position.coords.longitude);
+        getPlaceName(position.coords.latitude, position.coords.longitude);
+    }
+
+    getGeoLocation();
+
 });
+
