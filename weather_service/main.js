@@ -2,9 +2,6 @@
  * Created by hannest on 4/27/17.
  */
 
-console.log('test');
-
-
 //Esimerkkejä:
 var list_city = [{"Cities":
                     [{"Helsinki": {
@@ -32,12 +29,12 @@ var list_weather = [{"Weather":
 //console.log(list_weather)
 
 $( document ).ready(function() {
-    console.log( "ready!" );
+    console.log( "main.js ready!" );
 
     loadFavourites();
 
     $('#favouritesButton').click(function(){
-        console.log('clicked');
+        //console.log('clicked');
 
         var location = $("#currentCity").text();
         var temperature = $("#temp").text();
@@ -54,21 +51,16 @@ $( document ).ready(function() {
 
 function loadFavourites() {
     if (localStorage.getItem("favourites") !== null){
-        console.log("favourites set");
+        //console.log("favourites set");
         var favourites = JSON.parse(localStorage.getItem("favourites"));
-        console.log(favourites.location[0]);
-
-
-
-
+        //console.log(favourites.location[0]);
         $( ".currentWeather" ).append( "<div style='border: 1px solid cyan;'><p>"+favourites.location[0]+"</p>" +
             "<p>"+favourites.location[1]+"</p></div>" );
     }
 }
 
 function onLocationSelected(location, country, temp){
-    console.log('Location: ' + location);
-
+    //console.log('Location: ' + location);
     /*for (city of list_city){
         console.log(city);
     }*/
@@ -76,7 +68,8 @@ function onLocationSelected(location, country, temp){
     $("#temp").text(temp+'°C');
 }
 
-function setWebcam(webcamid){
-    $("iframe").attr("src", "//api.lookr.com/embed/timelapse/"+webcamid+"/day?autoresize=1");
-
+function setWebcam(webcamid) {
+    $("iframe").attr("src", "//api.lookr.com/embed/timelapse/" + webcamid + "/day?autoresize=1");
 }
+
+
